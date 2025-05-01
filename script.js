@@ -1,39 +1,45 @@
-// Your NewsAPI Key
-const apiKey = 'd90779283fe94219baddeffba44a90c7';
+// ContextualWeb News API Key
+const apiKey = 'bf7d757112mshd9c8263c3a38647p185745jsnde513adac088';
 
-// Function to fetch and display news articles based on category
-async function fetchNews(category = 'general') {
+// Function to fetch and display news articles
+async function fetchNews(category = 'latest') {
   const loading = document.querySelector('.loading');
-  loading.style.display = 'block';  // Show the loading spinner
+  loading.style.display = 'block';
 
   try {
-    const response = await fetch(`https://newsapi.org/v2/top-headlines?category=${category}&apiKey=${apiKey}`);
-    const data = await response.json();
+    const response = await fetch(`https://contextualwebsearch-web-search.p.rapidapi.com/api/search/NewsSearchAPI?q=${category}&pageNumber=1&pageSize=10&autoCorrect=true`, {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': apiKey,
+        'X-RapidAPI-Host': 'contextualwebsearch-web-search.p.rapidapi.com'
+      }
+    });
 
-    // Log the response to check if it's working
+    const data = await response.json();
     console.log(data);
 
-    if (data && data.articles) {
-      displayArticles(data.articles);
+    if (data && data.value) {
+      displayArticles(data.value);
     } else {
       console.error('No articles found or API request failed');
     }
+
   } catch (error) {
     console.error('Error fetching news:', error);
   } finally {
-    loading.style.display = 'none';  // Hide the loading spinner after data is loaded
+    loading.style.display = 'none';
   }
 }
 
-// Function to display articles on the page
+// Function to display articles
 function displayArticles(articles) {
   const articlesSection = document.querySelector('.articles');
-  articlesSection.innerHTML = '';  // Clear current articles
+  articlesSection.innerHTML = '';
 
   articles.forEach(article => {
     const articleElement = document.createElement('article');
     articleElement.innerHTML = `
-      <img src="${article.urlToImage || 'https://via.placeholder.com/350x200'}" alt="news-image">
+      <img src="${article.image?.url || 'https://via.placeholder.com/350x200'}" alt="news-image">
       <h2>${article.title}</h2>
       <p>${article.description || 'No description available.'}</p>
       <a href="${article.url}" target="_blank">Read more</a>
@@ -42,31 +48,37 @@ function displayArticles(articles) {
   });
 }
 
-// Function to search news based on query
+// Function to search news
 async function searchNews(query) {
   const loading = document.querySelector('.loading');
-  loading.style.display = 'block';  // Show the loading spinner
+  loading.style.display = 'block';
 
   try {
-    const response = await fetch(`https://newsapi.org/v2/everything?q=${query}&apiKey=${apiKey}`);
-    const data = await response.json();
+    const response = await fetch(`https://contextualwebsearch-web-search.p.rapidapi.com/api/search/NewsSearchAPI?q=${query}&pageNumber=1&pageSize=10&autoCorrect=true`, {
+      method: 'GET',
+      headers: {
+        'X-RapidAPI-Key': apiKey,
+        'X-RapidAPI-Host': 'contextualwebsearch-web-search.p.rapidapi.com'
+      }
+    });
 
-    // Log the response to check if it's working
+    const data = await response.json();
     console.log(data);
 
-    if (data && data.articles) {
-      displayArticles(data.articles);
+    if (data && data.value) {
+      displayArticles(data.value);
     } else {
       console.error('No articles found or API request failed');
     }
+
   } catch (error) {
     console.error('Error fetching search results:', error);
   } finally {
-    loading.style.display = 'none';  // Hide the loading spinner after data is loaded
+    loading.style.display = 'none';
   }
 }
 
-// Event listener for search button
+// Event listener for search
 const searchButton = document.getElementById('searchButton');
 const searchInput = document.getElementById('searchInput');
 searchButton.addEventListener('click', () => {
@@ -76,8 +88,8 @@ searchButton.addEventListener('click', () => {
   }
 });
 
-// Event listeners for category buttons
-document.getElementById('home').addEventListener('click', () => fetchNews('general'));
+// Category buttons (as keywords)
+document.getElementById('home').addEventListener('click', () => fetchNews('latest'));
 document.getElementById('politics').addEventListener('click', () => fetchNews('politics'));
 document.getElementById('sports').addEventListener('click', () => fetchNews('sports'));
 document.getElementById('entertainment').addEventListener('click', () => fetchNews('entertainment'));
@@ -93,3 +105,8 @@ darkModeButton.addEventListener('click', () => {
     article.classList.toggle('dark-mode');
   });
 });
+
+// Load default news on page load
+window.onload = () => {
+  fetchNews('latest');
+};
