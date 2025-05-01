@@ -1,25 +1,25 @@
-// ContextualWeb News API Key
+// Real-Time News Data API Key
 const apiKey = 'bf7d757112mshd9c8263c3a38647p185745jsnde513adac088';
 
 // Function to fetch and display news articles
-async function fetchNews(category = 'latest') {
+async function fetchNews(category = 'TECHNOLOGY') {
   const loading = document.querySelector('.loading');
   loading.style.display = 'block';
 
   try {
-    const response = await fetch(`https://contextualwebsearch-web-search.p.rapidapi.com/api/search/NewsSearchAPI?q=${category}&pageNumber=1&pageSize=10&autoCorrect=true`, {
+    const response = await fetch(`https://real-time-news-data.p.rapidapi.com/topic-news?topic=${category}&lang=en`, {
       method: 'GET',
       headers: {
         'X-RapidAPI-Key': apiKey,
-        'X-RapidAPI-Host': 'contextualwebsearch-web-search.p.rapidapi.com'
+        'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
       }
     });
 
     const data = await response.json();
     console.log(data);
 
-    if (data && data.value) {
-      displayArticles(data.value);
+    if (data && data.data) {
+      displayArticles(data.data);
     } else {
       console.error('No articles found or API request failed');
     }
@@ -39,7 +39,7 @@ function displayArticles(articles) {
   articles.forEach(article => {
     const articleElement = document.createElement('article');
     articleElement.innerHTML = `
-      <img src="${article.image?.url || 'https://via.placeholder.com/350x200'}" alt="news-image">
+      <img src="${article.image || 'https://via.placeholder.com/350x200'}" alt="news-image">
       <h2>${article.title}</h2>
       <p>${article.description || 'No description available.'}</p>
       <a href="${article.url}" target="_blank">Read more</a>
@@ -54,19 +54,19 @@ async function searchNews(query) {
   loading.style.display = 'block';
 
   try {
-    const response = await fetch(`https://contextualwebsearch-web-search.p.rapidapi.com/api/search/NewsSearchAPI?q=${query}&pageNumber=1&pageSize=10&autoCorrect=true`, {
+    const response = await fetch(`https://real-time-news-data.p.rapidapi.com/search?query=${query}&lang=en`, {
       method: 'GET',
       headers: {
         'X-RapidAPI-Key': apiKey,
-        'X-RapidAPI-Host': 'contextualwebsearch-web-search.p.rapidapi.com'
+        'X-RapidAPI-Host': 'real-time-news-data.p.rapidapi.com'
       }
     });
 
     const data = await response.json();
     console.log(data);
 
-    if (data && data.value) {
-      displayArticles(data.value);
+    if (data && data.data) {
+      displayArticles(data.data);
     } else {
       console.error('No articles found or API request failed');
     }
@@ -88,12 +88,12 @@ searchButton.addEventListener('click', () => {
   }
 });
 
-// Category buttons (as keywords)
-document.getElementById('home').addEventListener('click', () => fetchNews('latest'));
-document.getElementById('politics').addEventListener('click', () => fetchNews('politics'));
-document.getElementById('sports').addEventListener('click', () => fetchNews('sports'));
-document.getElementById('entertainment').addEventListener('click', () => fetchNews('entertainment'));
-document.getElementById('technology').addEventListener('click', () => fetchNews('technology'));
+// Category buttons (topics: TECHNOLOGY, POLITICS, SPORTS, ENTERTAINMENT)
+document.getElementById('home').addEventListener('click', () => fetchNews('WORLD'));
+document.getElementById('politics').addEventListener('click', () => fetchNews('POLITICS'));
+document.getElementById('sports').addEventListener('click', () => fetchNews('SPORTS'));
+document.getElementById('entertainment').addEventListener('click', () => fetchNews('ENTERTAINMENT'));
+document.getElementById('technology').addEventListener('click', () => fetchNews('TECHNOLOGY'));
 
 // Dark mode toggle
 const darkModeButton = document.getElementById('darkModeButton');
@@ -108,5 +108,5 @@ darkModeButton.addEventListener('click', () => {
 
 // Load default news on page load
 window.onload = () => {
-  fetchNews('latest');
+  fetchNews('WORLD');
 };
